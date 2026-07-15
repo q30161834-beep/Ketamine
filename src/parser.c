@@ -1521,6 +1521,14 @@ ASTNode *parse_prefix_expr(Parser *p) {
             n->flags = mut ? NF_MUT : NF_NONE;
             return n;
         }
+        case KW_AWAIT: {
+            parser_advance(p);
+            ASTNode *inner = parse_expr_prec(p, PREC_UNARY);
+            ASTNode *n = new_node(p, N_AWAIT, span_from(p, start));
+            n->unary.unary_op = KW_AWAIT;
+            n->unary.unary_right = inner;
+            return n;
+        }
         case TK_AND:  // 'and' keyword
         case TK_NOT:  // 'not' keyword
             // Handled by the lexer mapping

@@ -222,6 +222,7 @@ typedef enum {
     TY_INFER,           // type to be inferred
     TY_ERROR,           // error sentinel
     TY_OPAQUE,          // opaque external type
+    TY_FUTURE,          // Future<T> — async computation
 } TypeKind;
 
 // ─── Forward declarations ─────────────────────────────────────────────────────
@@ -324,6 +325,11 @@ struct Type {
             const char  *name;
             struct Type *underlying;
         } alias;
+
+        // Future<T>
+        struct {
+            struct Type *output_type;
+        } future;
     };
 };
 
@@ -1052,6 +1058,7 @@ Type      *ket_type_ref(TypeTable *tt, Type *pointee, bool mut);
 Type      *ket_type_tuple(TypeTable *tt, Type **elems, int count);
 Type      *ket_type_fn(TypeTable *tt, Type **params, int pcount, Type *ret,
                        bool variadic, CallingConv cc);
+Type      *ket_type_future(TypeTable *tt, Type *output_type);
 Type      *ket_type_struct(TypeTable *tt, const char *name, Field *fields,
                            int fcount);
 Type      *ket_type_enum(TypeTable *tt, const char *name, Variant *variants,

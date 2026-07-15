@@ -40,6 +40,19 @@ set(KET_SOURCES
     src/ffi_ownership.c
     src/monomorph_dispatch.c
     src/jit_layout.c
+    src/runtime.c
+    src/ffi_zero_copy.c
+    src/dwarf.c
+    src/parallel.c
+    src/registry.c
+    src/coverage.c
+    src/profiler.c
+    src/macros.c
+    src/closures.c
+    src/const_generics.c
+    src/test_framework.c
+    src/trait_associated.c
+    src/build_system.c
 )
 
 set(KET_HEADERS
@@ -57,6 +70,19 @@ set(KET_HEADERS
     src/include/ffi_ownership.h
     src/include/monomorph_dispatch.h
     src/include/jit_layout.h
+    src/include/runtime.h
+    src/include/ffi_zero_copy.h
+    src/include/dwarf.h
+    src/include/parallel.h
+    src/include/registry.h
+    src/include/coverage.h
+    src/include/profiler.h
+    src/include/macros.h
+    src/include/closures.h
+    src/include/const_generics.h
+    src/include/test_framework.h
+    src/include/trait_associated.h
+    src/include/build_system.h
 )
 
 # ─── Executable ────────────────────────────────────────────────────────────────

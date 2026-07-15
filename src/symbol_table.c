@@ -239,6 +239,15 @@ Type *ket_type_fn(TypeTable *tt, Type **params, int pcount, Type *ret,
     return t;
 }
 
+Type *ket_type_future(TypeTable *tt, Type *output_type) {
+    Type *t = (Type*)arena_alloc_zero(tt->arena, sizeof(Type));
+    t->kind = TY_FUTURE;
+    t->future.output_type = output_type;
+    t->size = sizeof(void*); // pointer to heap-allocated Future
+    t->align = 8;
+    return t;
+}
+
 Type *ket_type_struct(TypeTable *tt, const char *name, Field *fields, int fcount) {
     Type *t = (Type*)arena_alloc_zero(tt->arena, sizeof(Type));
     t->kind = TY_STRUCT;
