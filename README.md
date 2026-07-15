@@ -4,6 +4,8 @@
 [![Version](https://img.shields.io/badge/version-0.1.0--alpha-orange.svg)](https://github.com/ketamine-lang/ketamine/releases)
 [![Lines of Code](https://img.shields.io/tokei/lines/github/ketamine-lang/ketamine)](https://github.com/ketamine-lang/ketamine)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+[![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA54AE)](https://github.com/sponsors/q30161834-beep)
+[![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/kbz7GpYAM)
 
 # Ketamine Programming Language
 
@@ -134,11 +136,28 @@ match color {
 }
 ```
 
+## Community
+
+- 💬 [Discord](https://discord.gg/kbz7GpYAM) — chat, support, development
+- 🐛 [Issues](https://github.com/q30161834-beep/Ketamine/issues) — bug reports & feature requests
+- ⭐ [Sponsor](https://github.com/sponsors/q30161834-beep) — susține dezvoltarea
+
+## Quick Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/q30161834-beep/Ketamine/main/scripts/install.sh | bash
+```
+
 ## Roadmap
-- [ ] Type checker pass
-- [ ] Generics full support
-- [ ] Borrow checker
-- [ ] Standard library in Ketamine itself
-- [ ] Package manager (`ket add <pkg>`)
-- [ ] WASM backend
-- [ ] LSP server for IDE support
+
+- [x] Type checker pass
+- [x] Generics full support (monomorphization + traits + where clauses)
+- [x] Borrow checker
+- [x] Standard library in Ketamine itself (8 modules)
+- [x] Package manager (`ket init`, `ket install`, `ket add`)
+- [x] WASM backend
+- [x] LSP server (completions, hover, goto-def, diagnostics)
+- [x] CI/CD pipeline (GitHub Actions — Linux, macOS, Windows)
+- [ ] Native x86-64 backend
+- [ ] JIT compilation
+- [ ] WASM in-browser playground
