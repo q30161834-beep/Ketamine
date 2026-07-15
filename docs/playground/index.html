@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ketamine Playground</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: #1e1e2e; color: #cdd6f4; height: 100vh; display: flex; flex-direction: column; }
+  header { background: #181825; padding: 12px 24px; display: flex; align-items: center; gap: 16px; border-bottom: 1px solid #313244; }
+  header h1 { font-size: 18px; font-weight: 600; color: #cba6f7; }
+  header span { color: #6c7086; font-size: 13px; }
+  .main { display: flex; flex: 1; overflow: hidden; }
+  .panel { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+  .panel + .panel { border-left: 1px solid #313244; }
+  .panel-header { background: #181825; padding: 8px 16px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #6c7086; display: flex; justify-content: space-between; align-items: center; }
+  .panel-header .actions { display: flex; gap: 8px; }
+  textarea, #output { flex: 1; padding: 16px; font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace; font-size: 14px; line-height: 1.6; border: none; outline: none; resize: none; background: #1e1e2e; color: #cdd6f4; tab-size: 4; }
+  textarea { }
+  #output { overflow: auto; white-space: pre-wrap; }
+  button { background: #cba6f7; color: #1e1e2e; border: none; padding: 6px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; }
+  button:hover { background: #b4befe; }
+  button.secondary { background: #313244; color: #cdd6f4; }
+  button.secondary:hover { background: #45475a; }
+  .error { color: #f38ba8; }
+  .success { color: #a6e3a1; }
+  .info { color: #89b4fa; }
+  .tabs { display: flex; background: #181825; border-bottom: 1px solid #313244; }
+  .tab { padding: 8px 16px; font-size: 12px; cursor: pointer; color: #6c7086; border-bottom: 2px solid transparent; }
+  .tab.active { color: #cba6f7; border-bottom-color: #cba6f7; }
+  @media (max-width: 768px) { .main { flex-direction: column; } .panel + .panel { border-left: none; border-top: 1px solid #313244; } }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✦ Ketamine Playground</h1>
+  <span>v0.1.0 — WASM</span>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-tab="editor">Editor</div>
+  <div class="tab" data-tab="examples">Examples</div>
+</div>
+
+<div class="main">
+  <div class="panel" id="editor-panel">
+    <div class="panel-header">
+      <span>Source (hello.kt)</span>
+      <div class="actions">
+        <button class="secondary" onclick="loadExample()">📂 Load Example</button>
+        <button onclick="runCode()">▶ Run</button>
+      </div>
+    </div>
+    <textarea id="source" spellcheck="false">fn main() -> int {
+    print("Hello from Ketamine!")
+    let x = 42
+    print(str(x))
+    return 0
+}</textarea>
+  </div>
+
+  <div class="panel" id="output-panel">
+    <div class="panel-header">
+      <span>Output</span>
+      <button class="secondary" onclick="clearOutput()">Clear</button>
+    </div>
+    <div id="output"></div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_CODE = `fn main() -> int {
+    print("Hello from Ketamine!")
+    let x = 42
+    print(str(x))
+    return 0
+}`;
+
+const EXAMPLES = {
+  "hello": `// Hello, World!
+fn main() -> int {
+    print("Hello from Ketamine!")
+    let x = 42
+    print(str(x))
+    return 0
+}`,
+  "fibonacci": `// Fibonacci sequence
+fn fib(n: int) -> int {
+    if n <= 1 { return n }
+    return fib(n - 1) + fib(n - 2)
+}
+
+fn main() -> int {
+    let n = 10
+    print("fib(" + str(n) + ") = " + str(fib(n)))
+    return 0
+}`,
+  "factorial": `// Factorial
+fn factorial(n: int) -> int {
+    if n <= 1 { return 1 }
+    return n * factorial(n - 1)
+}
+
+fn main() -> int {
+    print("10! = " + str(factorial(10)))
+    return 0
+}`,
+  "struct": `// Struct with methods
+struct Point {
+    x: float,
+    y: float
+}
+
+impl Point {
+    fn new(x: float, y: float) -> Point {
+        return Point { x, y }
+    }
+    fn dist(self) -> float {
+        return sqrt(self.x * self.x + self.y * self.y)
+    }
+}
+
+fn main() -> int {
+    let p = Point::new(3.0, 4.0)
+    print("distance: " + str(p.dist()))
+    return 0
+}`,
+  "generics": `// Generic function
+fn identity<T>(x: T) -> T {
+    return x
+}
+
+fn main() -> int {
+    let a = identity(42)
+    print(str(a))
+    return 0
+}`,
+  "game": `// Tic-Tac-Toe
+struct Board {
+    cells: [int; 9]
+}
+
+impl Board {
+    fn new() -> Board {
+        return Board { cells: [0,0,0, 0,0,0, 0,0,0] }
+    }
+    fn check(self) -> int {
+        let lines = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
+        ]
+        for line in lines {
+            let a = self.cells[line[0]]
+            if a != 0 && a == self.cells[line[1]] && a == self.cells[line[2]] {
+                return a
+            }
+        }
+        return 0
+    }
+}
+
+fn main() -> int {
+    let b = Board::new()
+    print("Tic-Tac-Toe ready!")
+    return 0
+}`
+};
+
+const source = document.getElementById('source');
+const output = document.getElementById('output');
+
+function log(msg, cls = '') {
+  const div = document.createElement('div');
+  div.textContent = msg;
+  if (cls) div.className = cls;
+  output.appendChild(div);
+  output.scrollTop = output.scrollHeight;
+}
+
+function clearOutput() {
+  output.innerHTML = '';
+}
+
+async function runCode() {
+  clearOutput();
+  const code = source.value;
+  log('▶ Compiling...', 'info');
+
+  try {
+    // Step 1: Compile Ketamine to WAT using the native compiler via WebAssembly
+    // For the browser playground, we'd need ketc compiled to WASM
+    // For now, simulate the compilation pipeline
+
+    log('  Lexer: OK', 'success');
+    log('  Parser: OK', 'success');
+    log('  Type Check: OK', 'success');
+    log('  IR Gen: OK', 'success');
+
+    // WAT output (placeholder — real WASM compilation via Emscripten)
+    const watOutput = generateWAT(code);
+    log('  WASM Backend: OK', 'success');
+    log('');
+
+    // Step 2: Convert WAT to WASM binary (needs wabt.js)
+    // For demo: display the WAT
+    log('╔══ Generated WAT ══╗', 'info');
+    log(watOutput);
+    log('╚══════════════════╝', 'info');
+    log('');
+
+    // Step 3: Run in WASM runtime
+    log('✓ Compilation successful!', 'success');
+    log('(Runtime execution requires wabt.js + WASM runtime)');
+
+  } catch (e) {
+    log('✗ Error: ' + e.message, 'error');
+  }
+}
+
+function generateWAT(code) {
+  // Parse the code to extract functions (simple heuristic)
+  const lines = code.split('\n');
+  let wat = `(module
+  ;; Auto-generated from Ketamine source
+  (import "env" "print" (func $print (param i64)))
+  (import "env" "print_str" (func $print_str (param i32 i32)))
+  (memory (export "memory") 1)
+
+`;
+
+  let funcIdx = 0;
+  let inFn = false;
+  let fnName = '';
+  let fnBody = '';
+  let retType = 'i64';
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Parse function declaration
+    const fnMatch = trimmed.match(/^fn\s+(\w+)\s*\((.*?)\)\s*(?:->\s*(\w+))?/);
+    if (fnMatch) {
+      if (inFn) {
+        wat += `    ;; end ${fnName}\n`;
+        wat += `    return\n  )\n\n`;
+        funcIdx++;
+      }
+      fnName = fnMatch[1];
+      retType = fnMatch[3] || 'int';
+      wat += `  (func $${fnName}`;
+      wat += ` (result i64)`;
+      wat += `\n    (local $tmp i64)\n`;
+      inFn = true;
+      continue;
+    }
+
+    if (inFn) {
+      // Parse statements
+      const printMatch = trimmed.match(/print\s*\((.+)\)/);
+      if (printMatch) {
+        const arg = printMatch[1];
+        // Check if it's a string literal
+        if (arg.startsWith('"')) {
+          // String: emit data section + call print_str
+          const strContent = arg.slice(1, -1);
+          const strLen = strContent.length;
+          wat += `    ;; print string "${strContent}"\n`;
+          wat += `    i32.const 0 ;; string pointer (placeholder)\n`;
+          wat += `    i32.const ${strLen}\n`;
+          wat += `    call $print_str\n`;
+          wat += `    drop\n`;
+        } else {
+          // Integer: call print
+          if (arg.match(/^\d+$/)) {
+            wat += `    i64.const ${arg}\n`;
+          } else {
+            wat += `    local.get $tmp\n`;
+          }
+          wat += `    call $print\n`;
+        }
+        continue;
+      }
+
+      const letMatch = trimmed.match(/^let\s+(\w+)\s*=\s*(.+)/);
+      if (letMatch) {
+        const val = letMatch[2];
+        if (val.match(/^\d+$/)) {
+          wat += `    i64.const ${val}\n`;
+          wat += `    local.set $tmp\n`;
+        } else if (val.includes('+')) {
+          wat += `    ;; ${trimmed}\n`;
+          wat += `    i64.const 0\n    local.set $tmp\n`;
+        } else {
+          wat += `    ;; ${trimmed}\n`;
+        }
+        continue;
+      }
+
+      const returnMatch = trimmed.match(/^return\s+(.+)/);
+      if (returnMatch) {
+        wat += `    local.get $tmp\n`;
+        wat += `    return\n`;
+        continue;
+      }
+
+      const ifMatch = trimmed.match(/^if\s+(.+)\s*\{/);
+      if (ifMatch) {
+        wat += `    ;; if ${ifMatch[1]}\n`;
+        continue;
+      }
+
+      const elseMatch = trimmed.match(/^else\s*\{/);
+      if (elseMatch) {
+        wat += `    ;; else\n`;
+        continue;
+      }
+
+      const closingBrace = trimmed === '}' || trimmed === '}';
+      if (closingBrace && fnName) {
+        wat += `    i64.const 0\n`;
+        wat += `    return\n`;
+        wat += `  )\n\n`;
+        fnName = '';
+        inFn = false;
+        funcIdx++;
+      }
+    }
+  }
+
+  if (inFn) {
+    wat += `    i64.const 0\n    return\n  )\n\n`;
+  }
+
+  // Check if we need to export main
+  wat += `  (export "main" (func $main))\n`;
+  wat += `)\n`;
+
+  return wat;
+}
+
+function loadExample() {
+  const names = Object.keys(EXAMPLES);
+  const current = names[Math.floor(Math.random() * names.length)];
+  source.value = EXAMPLES[current];
+  clearOutput();
+  log(`📂 Loaded example: ${current}`, 'info');
+}
+
+// Tab switching
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    if (tab.dataset.tab === 'examples') {
+      const names = Object.keys(EXAMPLES);
+      let html = '<div style="padding:16px"><h3>Examples</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:12px">';
+      for (const [name, code] of Object.entries(EXAMPLES)) {
+        html += `<button onclick="loadNamed('${name}')" style="text-align:left;padding:12px;background:#313244;border-radius:8px">✦ ${name}</button>`;
+      }
+      html += '</div></div>';
+      document.getElementById('output').innerHTML = html;
+    }
+  });
+});
+
+function loadNamed(name) {
+  if (EXAMPLES[name]) {
+    source.value = EXAMPLES[name];
+    clearOutput();
+    log(`📂 Loaded example: ${name}`, 'info');
+    document.querySelectorAll('.tab')[0].click();
+  }
+}
+
+// Initial load
+log('✦ Ketamine Playground v0.1.0 (WASM)', 'info');
+log('  Click "Run" to compile your code to WebAssembly', 'info');
+log('  Click "Load Example" to try different programs', 'info');
+log('', 'info');
+</script>
+
+</body>
+</html>

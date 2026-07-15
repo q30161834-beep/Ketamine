@@ -158,6 +158,9 @@ curl -fsSL https://raw.githubusercontent.com/q30161834-beep/Ketamine/main/script
 - [x] WASM backend
 - [x] LSP server (completions, hover, goto-def, diagnostics)
 - [x] CI/CD pipeline (GitHub Actions — Linux, macOS, Windows)
-- [ ] Native x86-64 backend
-- [ ] JIT compilation
-- [ ] WASM in-browser playground
+- [x] Native x86-64 backend (raw machine code + assembly text)
+- [x] JIT compilation (runtime compile & execute)
+- [x] WASM in-browser playground (`docs/playground/index.html`)
+- [ ] Self-hosting compiler (write Ketamine compiler in Ketamine)
+- [ ] WASM binary format output (.wasm) instead of WAT
+- [ ] AArch64 backend

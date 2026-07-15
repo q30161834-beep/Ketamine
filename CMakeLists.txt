@@ -31,6 +31,7 @@ set(KET_SOURCES
     src/ir.c
     src/ir_optimize.c
     src/codegen.c
+    src/native.c
 )
 
 set(KET_HEADERS

@@ -174,7 +174,8 @@ static void print_usage(void) {
         "\n"
         "Options:\n"
         "  -o <file>          Output file path\n"
-            "  --target <t>       Target backend: llvm (default), go, python, js, wasm\n"
+            "  --target <t>       Target backend: llvm (default), go, python, js, wasm,\n"
+        "                       x86/native, asm, jit\n"
         "  -O0 / -O1 / -O2 / -O3  Optimization level (default: -O0)\n"
         "\n"
         "  --lex              Dump tokens and exit\n"
@@ -200,6 +201,8 @@ static void print_usage(void) {
         "  ketc hello.kt                      # compile to LLVM IR (out.ll)\n"
         "  ketc hello.kt -o hello.ll           # specify output\n"
         "  ketc hello.kt --target go -o hello.go  # compile to Go\n"
+        "  ketc hello.kt --target asm -o hello.asm  # compile to assembly\n"
+        "  ketc hello.kt --target jit               # JIT compile & run\n"
         "  ketc hello.kt -O2                   # optimize\n"
         "  ketc --lex hello.kt                 # dump tokens\n"
         "  ketc --dump-ast hello.kt            # dump AST\n"
@@ -430,6 +433,9 @@ int main(int argc, char **argv) {
             else if (strcmp(t, "python") == 0) opts.target = TARGET_PYTHON;
             else if (strcmp(t, "js") == 0) opts.target = TARGET_JS;
             else if (strcmp(t, "wasm") == 0) opts.target = TARGET_WASM;
+            else if (strcmp(t, "x86") == 0 || strcmp(t, "native") == 0) opts.target = TARGET_X86_64;
+            else if (strcmp(t, "asm") == 0) opts.target = TARGET_ASM;
+            else if (strcmp(t, "jit") == 0) opts.target = TARGET_JIT;
             else { fprintf(stderr, "Unknown target: %s\n", t); return 1; }
             continue;
         }
@@ -644,6 +650,32 @@ int main(int argc, char **argv) {
         case TARGET_WASM:
             result = codegen_wasm_module(ctx->ir_module, opts.output_path, &opts);
             break;
+        case TARGET_ASM:
+            result = codegen_asm_module(ctx->ir_module, opts.output_path, &opts);
+            if (result == 0) {
+                fprintf(stderr, "ketc: Assembly -> %s\n", opts.output_path);
+            }
+            break;
+        case TARGET_X86_64:
+            result = codegen_native_module(ctx->ir_module, opts.output_path, &opts);
+            if (result == 0) {
+                fprintf(stderr, "ketc: Native x86-64 -> %s\n", opts.output_path);
+            }
+            break;
+        case TARGET_JIT: {
+            result = jit_compile_module(ctx->ir_module, &opts);
+            if (result == 0) {
+                JITFunc main_fn = jit_get_function("main");
+                if (main_fn) {
+                    fprintf(stderr, "ketc: JIT executing main()...\n");
+                    main_fn(NULL);
+                } else {
+                    fprintf(stderr, "ketc: JIT compiled successfully (no main() found)\n");
+                }
+                jit_free();
+            }
+            break;
+        }
         default:
             fprintf(stderr, "ketc: unsupported target\n");
             result = 1;

@@ -927,6 +927,8 @@ typedef enum {
     TARGET_JS,
     TARGET_WASM,
     TARGET_X86_64,
+    TARGET_ASM,         // Intel-syntax assembly text
+    TARGET_JIT,         // Just-In-Time compilation
     TARGET_AARCH64,
     TARGET_RISCV64,
 } TargetBackend;
