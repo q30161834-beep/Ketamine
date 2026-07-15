@@ -37,6 +37,9 @@ set(KET_SOURCES
     src/format.c
     src/logging.c
     src/docgen.c
+    src/ffi_ownership.c
+    src/monomorph_dispatch.c
+    src/jit_layout.c
 )
 
 set(KET_HEADERS
@@ -51,6 +54,9 @@ set(KET_HEADERS
     src/include/trait_resolve.h
     src/include/package.h
     src/include/lsp.h
+    src/include/ffi_ownership.h
+    src/include/monomorph_dispatch.h
+    src/include/jit_layout.h
 )
 
 # ─── Executable ────────────────────────────────────────────────────────────────

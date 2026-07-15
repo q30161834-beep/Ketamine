@@ -89,10 +89,10 @@ Token    lexer_next(Lexer *lexer);
 Token    lexer_peek(Lexer *lexer);
 
 // Consume token if it matches, return true. Otherwise return false.
-bool     lexer_match(Lexer *lexer, TokenType type);
+bool     lexer_match(Lexer *lexer, KetTokenType type);
 
 // Expect a specific token type, emit error if mismatch
-Token    lexer_expect(Lexer *lexer, TokenType type, const char *msg);
+Token    lexer_expect(Lexer *lexer, KetTokenType type, const char *msg);
 
 // Synchronize after error (skip to statement boundary)
 void     lexer_sync(Lexer *lexer);
@@ -107,14 +107,14 @@ Span     lexer_span(Lexer *lexer, Location start);
 void     lexer_dump(Lexer *lexer);
 
 // Convert token type to string (for error messages)
-const char *token_type_name(TokenType type);
+const char *token_type_name(KetTokenType type);
 
 // Check if token type is an operator
-bool     token_is_operator(TokenType type);
-bool     token_is_assignment(TokenType type);
-bool     token_is_keyword(TokenType type);
-bool     token_is_type_keyword(TokenType type);
-bool     token_is_literal(TokenType type);
+bool     token_is_operator(KetTokenType type);
+bool     token_is_assignment(KetTokenType type);
+bool     token_is_keyword(KetTokenType type);
+bool     token_is_type_keyword(KetTokenType type);
+bool     token_is_literal(KetTokenType type);
 
 // ─── Unicode Helpers ──────────────────────────────────────────────────────────
 

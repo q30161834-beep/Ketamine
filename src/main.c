@@ -789,7 +789,10 @@ int main(int argc, char **argv) {
         fprintf(stderr, "\n─── Summary ───\n");
         if (ctx->ir_module) {
             fprintf(stderr, "  Functions:        %d\n", ctx->ir_module->func_count);
-            fprintf(stderr, "  Basic Blocks:     %d\n", ctx->ir_module->block_count);
+            int total_blocks = 0;
+            for (int f = 0; f < ctx->ir_module->func_count; f++)
+                total_blocks += ctx->ir_module->functions[f]->block_count;
+            fprintf(stderr, "  Basic Blocks:     %d\n", total_blocks);
             // Count IR instructions
             int total_insts = 0;
             for (int f = 0; f < ctx->ir_module->func_count; f++) {

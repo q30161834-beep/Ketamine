@@ -10,7 +10,7 @@
 // KEYWORD TABLE
 // ═══════════════════════════════════════════════════════════════════════════════
 
-typedef struct { const char *word; TokenType type; bool is_type; } KeywordEntry;
+typedef struct { const char *word; KetTokenType type; bool is_type; } KeywordEntry;
 
 static const KeywordEntry keywords[] = {
     {"fn",         KW_FN,        false},
@@ -167,7 +167,7 @@ bool is_whitespace(uint32_t cp) {
 // TOKEN TYPE NAMES
 // ═══════════════════════════════════════════════════════════════════════════════
 
-const char *token_type_name(TokenType type) {
+const char *token_type_name(KetTokenType type) {
     static const char *names[] = {
         [TK_EOF]              = "end of file",
         [TK_ERROR]            = "error",
@@ -260,26 +260,26 @@ const char *token_type_name(TokenType type) {
     return "unknown token";
 }
 
-bool token_is_operator(TokenType type) {
+bool token_is_operator(KetTokenType type) {
     return (type >= TK_PLUS && type <= TK_PIPE_FORWARD) ||
            (type >= TK_PLUSEQ && type <= TK_GTGTEQ);
 }
 
-bool token_is_assignment(TokenType type) {
+bool token_is_assignment(KetTokenType type) {
     return type == TK_EQ ||
            (type >= TK_PLUSEQ && type <= TK_GTGTEQ);
 }
 
-bool token_is_keyword(TokenType type) {
+bool token_is_keyword(KetTokenType type) {
     return (type >= KW_FN && type <= KW_UNCHECKED) ||
            (type >= TK_TYPE_VOID && type <= TK_TYPE_AUTO);
 }
 
-bool token_is_literal(TokenType type) {
+bool token_is_literal(KetTokenType type) {
     return type >= TK_INT_LIT && type <= TK_NULL_LIT;
 }
 
-bool token_is_type_keyword(TokenType type) {
+bool token_is_type_keyword(KetTokenType type) {
     return type >= TK_TYPE_VOID && type <= TK_TYPE_AUTO;
 }
 
@@ -318,7 +318,7 @@ static Location make_loc(Lexer *l) {
     return loc;
 }
 
-static Token make_token(Lexer *l, TokenType type) {
+static Token make_token(Lexer *l, KetTokenType type) {
     Token t;
     t.type = type;
     t.start = l->token_start;
@@ -359,7 +359,7 @@ static void skip_whitespace(Lexer *l) {
     }
 }
 
-static TokenType ident_or_keyword(const char *s, int len) {
+static KetTokenType ident_or_keyword(const char *s, int len) {
     for (int i = 0; keywords[i].word; i++) {
         if ((int)strlen(keywords[i].word) == len &&
             memcmp(keywords[i].word, s, len) == 0) {
@@ -737,7 +737,7 @@ Token lexer_peek(Lexer *l) {
     return t;
 }
 
-bool lexer_match(Lexer *l, TokenType type) {
+bool lexer_match(Lexer *l, KetTokenType type) {
     // Ensure peek is loaded
     Token t = lexer_next(l);
     if (t.type == type) return true;
@@ -749,7 +749,7 @@ bool lexer_match(Lexer *l, TokenType type) {
     return false;
 }
 
-Token lexer_expect(Lexer *l, TokenType type, const char *msg) {
+Token lexer_expect(Lexer *l, KetTokenType type, const char *msg) {
     Token t = lexer_next(l);
     if (t.type != type) {
         ket_diag_push(l->ctx, SEV_ERROR, t.loc, 0,

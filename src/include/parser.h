@@ -97,9 +97,9 @@ Token    parser_cur(Parser *parser);
 Token    parser_peek(Parser *parser);
 
 // Check / match / expect
-bool     parser_check(Parser *parser, TokenType type);
-bool     parser_match(Parser *parser, TokenType type);
-Token    parser_expect(Parser *parser, TokenType type, const char *msg);
+bool     parser_check(Parser *parser, KetTokenType type);
+bool     parser_match(Parser *parser, KetTokenType type);
+Token    parser_expect(Parser *parser, KetTokenType type, const char *msg);
 
 // Synchronize to next statement
 void     parser_sync(Parser *parser);

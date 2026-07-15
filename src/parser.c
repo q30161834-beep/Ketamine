@@ -1,4 +1,5 @@
 #include "include/parser.h"
+#include "include/arena.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 
 // ─── Precedence table ─────────────────────────────────────────────────────────
-static Precedence token_precedence(TokenType type) {
+static Precedence token_precedence(KetTokenType type) {
     switch (type) {
         case TK_EQ: case TK_PLUSEQ: case TK_MINUSEQ:
         case TK_STAREQ: case TK_SLASHEQ: case TK_PERCENTEQ:
@@ -41,11 +42,11 @@ static Precedence token_precedence(TokenType type) {
 }
 
 // ─── Pratt infix binding power ────────────────────────────────────────────────
-static Precedence infix_prec(TokenType type) {
+static Precedence infix_prec(KetTokenType type) {
     return token_precedence(type);
 }
 
-static Precedence prefix_prec(TokenType type) {
+static Precedence prefix_prec(KetTokenType type) {
     (void)type;
     return PREC_UNARY;
 }
@@ -83,11 +84,11 @@ void parser_advance(Parser *p) {
 Token parser_cur(Parser *p) { return p->current; }
 Token parser_peek(Parser *p) { return p->peek; }
 
-bool parser_check(Parser *p, TokenType type) {
+bool parser_check(Parser *p, KetTokenType type) {
     return p->current.type == type;
 }
 
-bool parser_match(Parser *p, TokenType type) {
+bool parser_match(Parser *p, KetTokenType type) {
     if (p->current.type == type) {
         parser_advance(p);
         return true;
@@ -95,7 +96,7 @@ bool parser_match(Parser *p, TokenType type) {
     return false;
 }
 
-Token parser_expect(Parser *p, TokenType type, const char *msg) {
+Token parser_expect(Parser *p, KetTokenType type, const char *msg) {
     if (p->current.type == type) {
         Token t = p->current;
         parser_advance(p);
@@ -367,7 +368,7 @@ ASTNode *parse_fn_decl(Parser *p, NodeFlags flags) {
     // Return type
     n->fn_decl.fn_ret_type = NULL;
     n->fn_decl.fn_variadic = false;
-    n->fn_decl.fn_cconv = CC_DEFAULT;
+    n->fn_decl.fn_cconv = KET_CC_DEFAULT;
     if (parser_match(p, TK_ARROW)) {
         n->fn_decl.fn_ret_type = parse_type(p);
     }
@@ -884,7 +885,7 @@ struct Type *parse_type_fn(Parser *p) {
     }
 
     TypeTable *tt = &p->ctx->types;
-    return ket_type_fn(tt, params, pcount, ret, variadic, CC_DEFAULT);
+    return ket_type_fn(tt, params, pcount, ret, variadic, KET_CC_DEFAULT);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -1502,7 +1503,7 @@ ASTNode *parse_prefix_expr(Parser *p) {
         case TK_EXCLAM:
         case TK_TILDE:
         case TK_STAR: {
-            TokenType op = p->current.type;
+            KetTokenType op = p->current.type;
             parser_advance(p);
             ASTNode *right = parse_expr_prec(p, PREC_UNARY);
             ASTNode *n = new_node(p, N_UNARY, span_from(p, start));
@@ -1613,7 +1614,7 @@ ASTNode *parse_expr_prec(Parser *p, Precedence min_prec) {
     left = parse_postfix_expr(p, left);
 
     for (;;) {
-        TokenType op = p->current.type;
+        KetTokenType op = p->current.type;
         Precedence prec = infix_prec(op);
 
         // Range

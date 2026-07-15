@@ -85,7 +85,7 @@ typedef struct InternStr {
 } InternStr;
 
 // ─── Token Types ──────────────────────────────────────────────────────────────
-typedef enum {
+typedef enum KetTokenType {
     // ── Special ──
     TK_EOF = 0,
     TK_ERROR,
@@ -153,11 +153,11 @@ typedef enum {
     TK_CUSTOM_OP_START,
     // ── Count ──
     TK_COUNT
-} TokenType;
+} KetTokenType;
 
 // ─── Token ────────────────────────────────────────────────────────────────────
 typedef struct {
-    TokenType   type;
+    KetTokenType   type;
     Location    loc;
     const char *start;
     int         length;
@@ -241,14 +241,14 @@ typedef enum {
 
 // ─── Calling convention ───────────────────────────────────────────────────────
 typedef enum {
-    CC_DEFAULT,
-    CC_CDECL,
-    CC_STDCALL,
-    CC_FASTCALL,
-    CC_VECTORCALL,
-    CC_THISCALL,
-    CC_REGCALL,
-    CC_KETAMINE,
+    KET_CC_DEFAULT,
+    KET_CC_CDECL,
+    KET_CC_STDCALL,
+    KET_CC_FASTCALL,
+    KET_CC_VECTORCALL,
+    KET_CC_THISCALL,
+    KET_CC_REGCALL,
+    KET_CC_KETAMINE,
 } CallingConv;
 
 // ─── Type ─────────────────────────────────────────────────────────────────────
@@ -575,7 +575,7 @@ struct ASTNode {
         struct {
             struct ASTNode *assign_target;
             struct ASTNode *assign_value;
-            TokenType       assign_op;   // TK_EQ, TK_PLUSEQ, etc.
+            KetTokenType       assign_op;   // TK_EQ, TK_PLUSEQ, etc.
         } assign;
 
         // If / If-Expr
@@ -618,14 +618,17 @@ struct ASTNode {
         struct {
             struct ASTNode *bin_left;
             struct ASTNode *bin_right;
-            TokenType       bin_op;
+            KetTokenType       bin_op;
         } binary;
 
         // Unary expression
         struct {
             struct ASTNode *unary_right;
-            TokenType       unary_op;
+            KetTokenType       unary_op;
         } unary;
+
+        // Return value / expression statement value
+        struct ASTNode *ret_val;
 
         // Call / Method call
         struct {
@@ -1060,8 +1063,8 @@ ASTNode *ket_ast_new_literal_int(Context *ctx, int64_t val, Span span);
 ASTNode *ket_ast_new_literal_float(Context *ctx, double val, Span span);
 ASTNode *ket_ast_new_literal_str(Context *ctx, const char *s, int len, Span span);
 ASTNode *ket_ast_new_ident(Context *ctx, const char *name, int len, Span span);
-ASTNode *ket_ast_new_binary(Context *ctx, TokenType op, ASTNode *l, ASTNode *r, Span span);
-ASTNode *ket_ast_new_unary(Context *ctx, TokenType op, ASTNode *r, Span span);
+ASTNode *ket_ast_new_binary(Context *ctx, KetTokenType op, ASTNode *l, ASTNode *r, Span span);
+ASTNode *ket_ast_new_unary(Context *ctx, KetTokenType op, ASTNode *r, Span span);
 
 // Symbol table
 SymTable *ket_sym_table_new(SymTable *parent, void *arena);
@@ -1076,6 +1079,8 @@ IRFunction   *ket_ir_new_function(IRModule *mod, const char *name, Type *type);
 IRBlock      *ket_ir_new_block(IRFunction *fn, const char *name);
 IRInst       *ket_ir_add_inst(IRBlock *block, IROp op, Type *type, Location loc);
 void          ket_ir_verify(IRModule *mod, Diagnostics *diag);
+IRModule     *ket_ir_lower(Context *ctx, ASTNode *program);
+void          ket_ir_free(IRModule *mod);
 
 // Optimizer
 void ket_opt_constant_folding(IRModule *mod, Diagnostics *diag);

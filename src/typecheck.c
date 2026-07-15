@@ -518,7 +518,7 @@ Type *ty_infer_expr(TyEnv *env, ASTNode *expr) {
             Type *left = ty_infer_expr(env, expr->binary.bin_left);
             Type *right = ty_infer_expr(env, expr->binary.bin_right);
 
-            TokenType op = expr->binary.bin_op;
+            KetTokenType op = expr->binary.bin_op;
 
             // Type-check based on operator
             switch (op) {
@@ -566,7 +566,7 @@ Type *ty_infer_expr(TyEnv *env, ASTNode *expr) {
         }
         case N_UNARY: {
             Type *right = ty_infer_expr(env, expr->unary.unary_right);
-            TokenType op = expr->unary.unary_op;
+            KetTokenType op = expr->unary.unary_op;
 
             switch (op) {
                 case TK_MINUS:

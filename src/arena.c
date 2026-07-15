@@ -1,3 +1,6 @@
+#ifdef _WIN32
+  #include <windows.h>
+#endif
 #include "include/arena.h"
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +8,6 @@
 #include <stdarg.h>
 
 #ifdef _WIN32
-  #include <windows.h>
   #define MAP_FAILED NULL
   static void *mmap_alloc(size_t sz) {
       return VirtualAlloc(NULL, sz, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
