@@ -66,6 +66,13 @@ JITFunc jit_get_function(const char *name);
 // Free all JIT-compiled code.
 void jit_free(void);
 
+// ─── Forth Codegen ────────────────────────────────────────────────────────────
+// Translates Ketamine IR to Forth source code.
+// Output: .fs file with ANS Forth-compatible postfix notation.
+// Handles: stack-based operations, IF/ELSE/THEN, word definitions, print.
+
+int codegen_forth_module(IRModule *mod, const char *path, CompileOptions *opts);
+
 // ─── Helper: Emit type string ─────────────────────────────────────────────────
 const char *codegen_type_str(struct Type *type);
 const char *codegen_llvm_type_str(struct Type *type);

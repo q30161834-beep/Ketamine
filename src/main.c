@@ -175,7 +175,7 @@ static void print_usage(void) {
         "Options:\n"
         "  -o <file>          Output file path\n"
             "  --target <t>       Target backend: llvm (default), go, python, js, wasm,\n"
-        "                       x86/native, asm, jit\n"
+        "                       x86/native, asm, jit, forth\n"
         "  -O0 / -O1 / -O2 / -O3  Optimization level (default: -O0)\n"
         "\n"
         "  --lex              Dump tokens and exit\n"
@@ -436,6 +436,7 @@ int main(int argc, char **argv) {
             else if (strcmp(t, "x86") == 0 || strcmp(t, "native") == 0) opts.target = TARGET_X86_64;
             else if (strcmp(t, "asm") == 0) opts.target = TARGET_ASM;
             else if (strcmp(t, "jit") == 0) opts.target = TARGET_JIT;
+            else if (strcmp(t, "forth") == 0) opts.target = TARGET_FORTH;
             else { fprintf(stderr, "Unknown target: %s\n", t); return 1; }
             continue;
         }
@@ -676,6 +677,12 @@ int main(int argc, char **argv) {
             }
             break;
         }
+        case TARGET_FORTH:
+            result = codegen_forth_module(ctx->ir_module, opts.output_path, &opts);
+            if (result == 0) {
+                fprintf(stderr, "ketc: Forth source -> %s\n", opts.output_path);
+            }
+            break;
         default:
             fprintf(stderr, "ketc: unsupported target\n");
             result = 1;

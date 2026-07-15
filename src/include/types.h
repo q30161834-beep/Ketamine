@@ -929,6 +929,7 @@ typedef enum {
     TARGET_X86_64,
     TARGET_ASM,         // Intel-syntax assembly text
     TARGET_JIT,         // Just-In-Time compilation
+    TARGET_FORTH,       // Forth stack-based language
     TARGET_AARCH64,
     TARGET_RISCV64,
 } TargetBackend;
