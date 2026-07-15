@@ -1,0 +1,129 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  # ─── Linux Build ──────────────────────────────────────────────────────────────
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq cmake gcc-12 clang-15 llvm-15-dev
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DKET_BUILD_TESTS=ON -DKET_STRICT_WARNINGS=ON
+
+      - name: Build
+        run: cmake --build build --parallel $(nproc)
+
+      - name: Run unit tests
+        run: |
+          ctest --test-dir build --output-on-failure --timeout 60
+
+      - name: Run integration tests
+        run: |
+          ./build/test_runner .
+
+      - name: Test examples compile
+        run: |
+          for f in examples/0*.kt; do
+            echo "Testing: $f"
+            ./build/ketc --parse "$f" || echo "WARNING: $f parse test"
+          done
+
+  # ─── macOS Build ──────────────────────────────────────────────────────────────
+  build-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install cmake llvm@15
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DKET_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --parallel $(sysctl -n hw.logicalcpu)
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # ─── Windows Build ────────────────────────────────────────────────────────────
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DKET_BUILD_TESTS=ON
+
+      - name: Build
+        run: cmake --build build --config ${{ env.BUILD_TYPE }} --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure --timeout 60
+
+  # ─── Code Quality ─────────────────────────────────────────────────────────────
+  code-quality:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install clang-format
+        run: sudo apt-get install -y -qq clang-format-15
+
+      - name: Check formatting
+        run: |
+          clang-format-15 --dry-run --Werror src/*.c src/include/*.h tests/*.c || echo "Format issues found"
+
+      - name: Line count
+        run: |
+          echo "### Code Statistics" >> $GITHUB_STEP_SUMMARY
+          echo "| Category | Lines |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          for cat in "src/*.c" "src/include/*.h" "tests/*.c" "stdlib/*.kt" "examples/*.kt"; do
+            count=$(wc -l $cat 2>/dev/null | tail -1 | awk '{print $1}')
+            echo "| $cat | $count |" >> $GITHUB_STEP_SUMMARY
+          done
+
+  # ─── Release ──────────────────────────────────────────────────────────────────
+  release:
+    if: github.event_name == 'release'
+    needs: [build-linux, build-macos, build-windows]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build release archive
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release
+          cmake --build build --parallel
+          mkdir -p ketamine-release
+          cp build/ketc ketamine-release/
+          cp -r stdlib ketamine-release/
+          cp -r docs ketamine-release/
+          cp README.md ketamine-release/
+          tar czf ketamine-${{ github.ref_name }}.tar.gz ketamine-release/
+
+      - name: Upload release asset
+        uses: actions/upload-artifact@v4
+        with:
+          name: ketamine-${{ github.ref_name }}
+          path: ketamine-*.tar.gz

@@ -1,0 +1,4 @@
+fn main() -> int {
+    let x = if true { 10 } else { 20 };
+    return x;
+}

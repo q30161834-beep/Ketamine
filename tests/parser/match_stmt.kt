@@ -1,0 +1,8 @@
+fn main() {
+    let x = 2;
+    match x {
+        1 => { print("one"); },
+        2 => { print("two"); },
+        _ => { print("other"); },
+    }
+}
