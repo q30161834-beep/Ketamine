@@ -1,11 +1,13 @@
-[![Build & Test](https://github.com/ketamine-lang/ketamine/actions/workflows/build.yml/badge.svg)](https://github.com/ketamine-lang/ketamine/actions/workflows/build.yml)
+[![Build](https://github.com/q30161834-beep/Ketamine/actions/workflows/build.yml/badge.svg)](https://github.com/q30161834-beep/Ketamine/actions/workflows/build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![C Standard](https://img.shields.io/badge/C-11-blue.svg)](https://en.wikipedia.org/wiki/C11_(C_standard_revision))
-[![Version](https://img.shields.io/badge/version-0.1.0--alpha-orange.svg)](https://github.com/ketamine-lang/ketamine/releases)
-[![Lines of Code](https://img.shields.io/tokei/lines/github/ketamine-lang/ketamine)](https://github.com/ketamine-lang/ketamine)
+[![Version](https://img.shields.io/badge/version-0.1.0--alpha-orange.svg)](https://github.com/q30161834-beep/Ketamine/releases)
+[![Lines of Code](https://img.shields.io/badge/LOC-29k-blue)](https://github.com/q30161834-beep/Ketamine)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 [![Sponsor](https://img.shields.io/badge/sponsor-30363D?logo=GitHub-Sponsors&logoColor=#EA54AE)](https://github.com/sponsors/q30161834-beep)
 [![Discord](https://img.shields.io/badge/Discord-5865F2?logo=discord&logoColor=white)](https://discord.gg/kbz7GpYAM)
+[![Install](https://img.shields.io/badge/install-guide-green.svg)](INSTALL.md)
+[![Security](https://img.shields.io/badge/security-policy-red.svg)](SECURITY.md)
 
 # Ketamine Programming Language
 
@@ -38,6 +40,20 @@ fn main() -> int {
 - Memory safety without GC: ownership + borrowing model
 - Built-in security: bounds-checked arrays, no implicit casts
 
+## Cerințe de Sistem
+
+| Componentă | Minim | Recomandat |
+|------------|-------|------------|
+| CMake | 3.16 | 3.25+ |
+| GCC / Clang | GCC 6.3 / Clang 12 | GCC 11+ / Clang 17+ |
+| LLVM (opțional) | 14 | 17+ |
+| NASM (opțional) | 2.15 | 2.16+ |
+| Python (opțional) | 3.8 | 3.12+ |
+| Go (opțional) | 1.18 | 1.22+ |
+| Git | 2.20 | 2.40+ |
+
+Vezi [INSTALL.md](INSTALL.md) pentru ghiduri complete de instalare pe fiecare platformă.
+
 ## Build the compiler
 
 ```bash
@@ -51,8 +67,6 @@ make -j$(nproc)
 cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
 mingw32-make
 ```
-
-**Requirements:** CMake 3.16+, GCC or Clang, LLVM toolchain (for final binary)
 
 ## Compile a program
 

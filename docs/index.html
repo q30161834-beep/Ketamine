@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ketamine Programming Language</title>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --fg: #c9d1d9;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --red: #f85149;
+            --border: #30363d;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            line-height: 1.6;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+        /* Hero */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero h1 {
+            font-size: 3.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.2em;
+            color: #8b949e;
+            margin: 20px 0 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .hero .tagline {
+            font-size: 0.9em;
+            color: var(--orange);
+            margin-top: 10px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--green);
+            color: #fff;
+        }
+        .btn-primary:hover { background: #2ea043; }
+        .btn-secondary {
+            background: #21262d;
+            color: var(--fg);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { background: #30363d; }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 60px 0;
+        }
+        .feature {
+            background: #161b22;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            transition: border-color 0.2s;
+        }
+        .feature:hover { border-color: var(--accent); }
+        .feature h3 { color: var(--accent); margin-bottom: 10px; }
+        .feature p { color: #8b949e; font-size: 0.9em; }
+
+        /* Code */
+        .code-block {
+            background: #161b22;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-block pre {
+            font-family: "JetBrains Mono", "Fira Code", monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+        }
+        .code-block .comment { color: #8b949e; }
+        .code-block .keyword { color: var(--red); }
+        .code-block .fn { color: #d2a8ff; }
+        .code-block .string { color: #a5d6ff; }
+        .code-block .number { color: #79c0ff; }
+
+        /* Sections */
+        section { padding: 40px 0; }
+        section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            color: #8b949e;
+            font-size: 0.85em;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.2em; }
+            .hero { padding: 40px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container">
+        <h1>Ketamine</h1>
+        <p>A compiled, statically-typed systems language focused on performance and security.</p>
+        <div class="tagline">⚡ LLVM-native · 🛡 Memory-safe · 🎯 Multi-backend</div>
+        <div style="margin-top: 30px;">
+            <a href="https://github.com/q30161834-beep/Ketamine" class="btn btn-primary">GitHub</a>
+            <a href="GETTING_STARTED.md" class="btn btn-secondary">Getting Started</a>
+            <a href="LANGUAGE_REFERENCE.md" class="btn btn-secondary">Docs</a>
+            <a href="playground/index.html" class="btn btn-secondary">Playground</a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <section>
+        <h2>De ce Ketamine?</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>⚡ Viteză</h3>
+                <p>Compilat la LLVM IR, apoi la cod mașină nativ. Zero runtime overhead, optimizări LLVM.</p>
+            </div>
+            <div class="feature">
+                <h3>🛡 Siguranță</h3>
+                <p>Ownership + borrowing (ca Rust), fără garbage collector, fără null, fără buffer overflows.</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 8 Backend-uri</h3>
+                <p>LLVM, Go, Python, JavaScript, WASM, Native x86-64, ASM, Forth — același cod, orice platformă.</p>
+            </div>
+            <div class="feature">
+                <h3>📦 Ecosistem</h3>
+                <p>Package manager, LSP server, VS Code extension, playground in-browser, debugger DWARF.</p>
+            </div>
+            <div class="feature">
+                <h3>🔧 Tooling</h3>
+                <p>Formatter, documentation generator, REPL cu JIT, profiler, code coverage, test framework.</p>
+            </div>
+            <div class="feature">
+                <h3>🌐 FFI</h3>
+                <p>Zero-copy FFI cu C, Python (numpy), Go, Rust. Ownership policies: copy, pin, transfer, refcount.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Exemplu rapid</h2>
+        <div class="code-block">
+<pre><span class="comment">// Funcție generică cu const generics</span>
+<span class="keyword">fn</span> <span class="fn">sum_array</span>&lt;T, <span class="keyword">const</span> N: <span class="keyword">int</span>&gt;(arr: [T; N]) -> T <span class="keyword">where</span> T: Add {
+    <span class="keyword">let mut</span> sum = <span class="number">0</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="number">0</span>..N {
+        sum = sum + arr[i]
+    }
+    <span class="keyword">return</span> sum
+}
+
+<span class="comment">// Async function</span>
+<span class="keyword">async fn</span> <span class="fn">fetch_data</span>(url: str) -> str {
+    <span class="keyword">let</span> resp = <span class="keyword">await</span> http::get(url)
+    <span class="keyword">return</span> resp.body
+}
+
+<span class="keyword">fn</span> <span class="fn">main</span>() -> <span class="keyword">int</span> {
+    <span class="keyword">let</span> future = fetch_data(<span class="string">"https://api.example.com"</span>)
+    <span class="keyword">let</span> result = Runtime::block_on(future)
+    print(result)
+    <span class="keyword">return</span> <span class="number">0</span>
+}</pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>Instalare rapidă</h2>
+        <div class="code-block">
+<pre><span class="comment"># One-liner</span>
+curl -fsSL https://raw.githubusercontent.com/q30161834-beep/Ketamine/main/scripts/install.sh | bash
+
+<span class="comment"># Sau manual</span>
+git clone https://github.com/q30161834-beep/Ketamine.git
+<span class="keyword">cd</span> Ketamine
+mkdir build && <span class="keyword">cd</span> build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)
+
+<span class="comment"># Rulează primul program</span>
+./ketc ../examples/00_hello.kt --target jit</pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>Resurse</h2>
+        <div class="features">
+            <div class="feature">
+                <h3>📖 Tutorial</h3>
+                <p><a href="GETTING_STARTED.md">Getting Started</a> — primii pași</p>
+                <p><a href="../TUTORIAL.md">Tutorial complet</a> — 10 secțiuni</p>
+            </div>
+            <div class="feature">
+                <h3>📚 Referință</h3>
+                <p><a href="LANGUAGE_REFERENCE.md">Language Reference</a></p>
+                <p><a href="COMPILER_INTERNALS.md">Compiler Internals</a></p>
+            </div>
+            <div class="feature">
+                <h3>🎮 Playground</h3>
+                <p><a href="playground/index.html">Try in browser</a> — WASM backend</p>
+            </div>
+            <div class="feature">
+                <h3>💬 Comunitate</h3>
+                <p><a href="https://discord.gg/kbz7GpYAM">Discord</a> — chat, support</p>
+                <p><a href="https://github.com/q30161834-beep/Ketamine/issues">Issues</a> — bug reports</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Sponsori</h2>
+        <p style="color: #8b949e;">Susține dezvoltarea Ketamine printr-un <a href="https://github.com/sponsors/q30161834-beep" style="color: var(--accent);">sponsorship</a>.</p>
+    </section>
+</div>
+
+<footer>
+    <div class="container">
+        <p>Licensed under <a href="https://opensource.org/licenses/MIT">MIT</a>.</p>
+        <p>Ketamine v0.1.0-alpha — 29,474 lines of C</p>
+    </div>
+</footer>
+
+</body>
+</html>

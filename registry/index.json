@@ -1,0 +1,88 @@
+{
+  "name": "Ketamine Package Registry",
+  "version": "1.0.0",
+  "description": "Official package registry for Ketamine compiler",
+  "registry_url": "https://raw.githubusercontent.com/q30161834-beep/Ketamine/main/registry",
+  "packages": [
+    {
+      "name": "net",
+      "version": "1.0.0",
+      "description": "HTTP client and server library",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "json",
+      "version": "1.0.0",
+      "description": "JSON parser and serializer",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "serde",
+      "version": "1.0.0",
+      "description": "Serialization and deserialization framework",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "http",
+      "version": "1.0.0",
+      "description": "HTTP protocol implementation",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": ["net@^1.0.0"],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "collections",
+      "version": "1.0.0",
+      "description": "Data structures: Vec, HashMap, Set, LinkedList",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "math",
+      "version": "1.0.0",
+      "description": "Advanced math functions and linear algebra",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "test",
+      "version": "1.0.0",
+      "description": "Testing framework with assertions and benchmarks",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    },
+    {
+      "name": "regex",
+      "version": "0.1.0",
+      "description": "Regular expression engine",
+      "author": "Ketamine Team",
+      "license": "MIT",
+      "repository": "https://github.com/q30161834-beep/Ketamine",
+      "dependencies": [],
+      "checksum": "sha256-placeholder"
+    }
+  ]
+}
