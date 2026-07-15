@@ -1,0 +1,32 @@
+{
+  "name": "ketamine-lang",
+  "displayName": "Ketamine Language",
+  "description": "Ketamine language support — syntax highlighting, LSP, formatting",
+  "version": "0.1.0",
+  "publisher": "ketamine-lang",
+  "license": "MIT",
+  "engines": { "vscode": "^1.75.0" },
+  "categories": ["Programming Languages", "Linters", "Formatters"],
+  "activationEvents": ["onLanguage:ketamine"],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [{
+      "id": "ketamine",
+      "aliases": ["Ketamine", "ketamine"],
+      "extensions": [".kt"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "ketamine",
+      "scopeName": "source.ketamine",
+      "path": "./syntaxes/ketamine.tmLanguage.json"
+    }],
+    "commands": [{
+      "command": "ketamine.runFile",
+      "title": "Ketamine: Run File (JIT)"
+    }, {
+      "command": "ketamine.compileToLLVM",
+      "title": "Ketamine: Compile to LLVM IR"
+    }]
+  }
+}

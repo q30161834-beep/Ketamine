@@ -194,6 +194,11 @@ static void print_usage(void) {
         "  --time             Show phase timing\n"
         "  --verbose          Verbose output\n"
         "  -j <n>             Parallel jobs\n"
+        "  --repl             Interactive REPL session\n"
+        "  --fmt <file>       Format Ketamine source file\n"
+        "  --doc <file>       Generate documentation from /// comments\n"
+        "  --log <level>      Log level: debug, info, warn, error\n"
+        "  --log-file <path>  Write logs to file\n"
         "  --help             This help message\n"
         "  --version          Show version\n"
         "\n"
@@ -203,6 +208,9 @@ static void print_usage(void) {
         "  ketc hello.kt --target go -o hello.go  # compile to Go\n"
         "  ketc hello.kt --target asm -o hello.asm  # compile to assembly\n"
         "  ketc hello.kt --target jit               # JIT compile & run\n"
+        "  ketc --repl                           # interactive REPL\n"
+        "  ketc --fmt hello.kt                   # format source\n"
+        "  ketc --doc hello.kt                   # generate docs\n"
         "  ketc hello.kt -O2                   # optimize\n"
         "  ketc --lex hello.kt                 # dump tokens\n"
         "  ketc --dump-ast hello.kt            # dump AST\n"
@@ -457,6 +465,44 @@ int main(int argc, char **argv) {
         else if (strcmp(argv[i], "--obfuscate") == 0) opts.obfuscate = true;
         else if (strcmp(argv[i], "--time") == 0) opts.time_phases = true;
         else if (strcmp(argv[i], "--verbose") == 0) opts.verbose = true;
+        else if (strcmp(argv[i], "--repl") == 0) {
+            // Delegate to REPL module
+            extern int repl_main(void);
+            return repl_main();
+        }
+        else if (strcmp(argv[i], "--fmt") == 0 && i + 1 < argc) {
+            extern int format_file(const char *input, int len, const char *path);
+            const char *file = argv[++i];
+            FILE *f = fopen(file, "rb");
+            if (!f) { fprintf(stderr, "Cannot open: %s\n", file); return 1; }
+            fseek(f, 0, SEEK_END); int sz = (int)ftell(f); fseek(f, 0, SEEK_SET);
+            char *buf = (char*)malloc(sz + 1);
+            fread(buf, 1, sz, f); buf[sz] = '\0'; fclose(f);
+            int r = format_file(buf, sz, file);
+            free(buf);
+            if (r == 0) fprintf(stderr, "Formatted: %s\n", file);
+            return r;
+        }
+        else if (strcmp(argv[i], "--doc") == 0 && i + 1 < argc) {
+            extern int generate_docs(const char *source, const char *output);
+            const char *file = argv[++i];
+            const char *out = (i + 1 < argc && argv[i+1][0] != '-') ? argv[++i] : NULL;
+            return generate_docs(file, out);
+        }
+        else if (strcmp(argv[i], "--log") == 0 && i + 1 < argc) {
+            const char *level = argv[++i];
+            extern void log_set_level(int level);
+            int l = 1; // LOG_INFO
+            if (strcmp(level, "debug") == 0) l = 0;
+            else if (strcmp(level, "info") == 0) l = 1;
+            else if (strcmp(level, "warn") == 0) l = 2;
+            else if (strcmp(level, "error") == 0) l = 3;
+            log_set_level(l);
+        }
+        else if (strcmp(argv[i], "--log-file") == 0 && i + 1 < argc) {
+            extern void log_set_file(const char *path);
+            log_set_file(argv[++i]);
+        }
         else if (strcmp(argv[i], "-j") == 0 && i + 1 < argc) {
             opts.jobs = atoi(argv[++i]);
         }

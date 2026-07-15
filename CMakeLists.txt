@@ -33,6 +33,10 @@ set(KET_SOURCES
     src/codegen.c
     src/native.c
     src/forth.c
+    src/repl.c
+    src/format.c
+    src/logging.c
+    src/docgen.c
 )
 
 set(KET_HEADERS
